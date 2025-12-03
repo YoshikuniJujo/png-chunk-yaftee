@@ -8,11 +8,13 @@ copyright:           "(c) 2025 Yoshikuni Jujo"
 
 extra-source-files:
 - README.md
+
+extra-doc-files:
 - CHANGELOG.md
 
 # Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis:            PNG's chunk codec on Yaftee
+category:            Codec,Graphics,Image
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
@@ -21,18 +23,18 @@ description:         Please see the README on GitHub at <https://github.com/Yosh
 
 dependencies:
 - base >= 4.7 && < 5
-- mono-traversable
-- yaftee
-- yaftee-basic-monads
-- yaftee-conduit
-- yaftee-conduit-mono-traversable
-- yaftee-conduit-bytestring
-- yaftee-conduit-bytestring-ft
-- higher-order-open-union
-- bytestring-ft
-- bitarray-bs
-- tools-yj
-- typelevel-tools-yj
+- mono-traversable >= 1.0 && < 1.1
+- yaftee >= 0.1 && < 0.2
+- yaftee-basic-monads >= 0.1 && < 0.2
+- yaftee-conduit >= 0.1 && < 0.2
+- yaftee-conduit-mono-traversable >= 0.1 && < 0.2
+- yaftee-conduit-bytestring >= 0.1 && < 0.2
+- yaftee-conduit-bytestring-ft >= 0.1 && < 0.2
+- higher-order-open-union >= 0.1 && < 0.2
+- bytestring-ft >= 0.1 && < 0.2
+- bitarray-bs >= 0.1 && < 0.2
+- tools-yj >= 0.1 && < 0.2
+- typelevel-tools-yj >= 0.1 && < 0.2
 
 ghc-options:
 - -Wall
