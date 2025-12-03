@@ -3,7 +3,7 @@
 {-# LANGUAGE ScopedTypeVariables, TypeApplications #-}
 {-# LANGUAGE RequiredTypeArguments #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds, ConstraintKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -Wall -fno-warn-tabs #-}
@@ -16,7 +16,7 @@ module Control.Monad.Yaftee.Pipe.Png.Chunk (
 
 	-- * DECODE
 
-	decode, hDecode, decodeRun_, DecodeStates,
+	decodeRun_, DecodeStates, decode, hDecode, DecodeMembers,
 
 	-- * ENCODE
 
@@ -53,10 +53,17 @@ import Data.TypeLevel.List
 
 import Numeric
 
+decodeRun_ ::
+	F.Loose (U.U es) =>
+	Eff.E (DecodeStates nm `Append` es) i o r -> Eff.E es i o ()
+decodeRun_ = void . (`State.runN` Crc32.initial)
+
+type DecodeStates nm = '[State.Named nm Crc32.C]
+
 
 decode :: forall nm -> (
-	U.Member Pipe.P es, OnDemand.Members nm es,
-	U.Member (State.Named nm Crc32.C) es, U.Member (Except.E String) es ) =>
+	U.Member Pipe.P es, DecodeMembers nm es,
+	U.Member (Except.E String) es ) =>
 	Int -> Eff.E es BSF.ByteString C ()
 decode nm n = void $ OnDemand.onDemand nm Pipe.=$= PipeCrc32.crc32 nm Pipe.=$= do
 	State.putN nm $ OnDemand.RequestBytes 8
@@ -66,14 +73,17 @@ decode nm n = void $ OnDemand.onDemand nm Pipe.=$= PipeCrc32.crc32 nm Pipe.=$= d
 	chunks nm n
 
 hDecode :: forall nm -> (
-	U.Member Pipe.P es, OnDemand.Members nm es,
-	U.Member (State.Named nm Crc32.C) es, U.Member (Except.E String) es,
-	U.Base IO.I es ) =>
+	U.Member Pipe.P es, DecodeMembers nm es,
+	U.Member (Except.E String) es, U.Base IO.I es ) =>
 	Handle -> Int -> Int -> Eff.E es BSF.ByteString C ()
 hDecode nm h n n' = void $
 	PipeBS.hGet n h Pipe.=$=
 	PipeT.convert BSF.fromStrict Pipe.=$=
 	decode nm n'
+
+type DecodeMembers nm es = (
+	OnDemand.Members nm es,
+	U.Member (State.Named nm Crc32.C) es )
 
 chunks :: forall nm -> (
 	U.Member Pipe.P es, OnDemand.Members nm es,
@@ -112,13 +122,6 @@ chunk1 nm d = do
 	split n = fix \go -> \case
 		0 -> []
 		m | n < m -> n : go (m - n) | otherwise -> [m]
-
-decodeRun_ ::
-	F.Loose (U.U es) =>
-	Eff.E (DecodeStates nm `Append` es) i o r -> Eff.E es i o ()
-decodeRun_ = void . (`State.runN` Crc32.initial)
-
-type DecodeStates nm = '[State.Named nm Crc32.C]
 
 data C	= Begin Int BSF.ByteString
 	| Body BSF.ByteString | End
