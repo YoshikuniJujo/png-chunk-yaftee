@@ -26,7 +26,6 @@ source-repository head
 library
   exposed-modules:
       Control.Monad.Yaftee.Pipe.Png.Chunk
-      Lib
   other-modules:
       Paths_png_chunk_yaftee
   autogen-modules:
@@ -40,32 +39,6 @@ library
     , bytestring-ft
     , higher-order-open-union
     , mono-traversable
-    , tools-yj
-    , typelevel-tools-yj
-    , yaftee
-    , yaftee-basic-monads
-    , yaftee-conduit
-    , yaftee-conduit-bytestring
-    , yaftee-conduit-bytestring-ft
-    , yaftee-conduit-mono-traversable
-  default-language: Haskell2010
-
-executable png-chunk-yaftee-exe
-  main-is: Main.hs
-  other-modules:
-      Paths_png_chunk_yaftee
-  autogen-modules:
-      Paths_png_chunk_yaftee
-  hs-source-dirs:
-      app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , bitarray-bs
-    , bytestring-ft
-    , higher-order-open-union
-    , mono-traversable
-    , png-chunk-yaftee
     , tools-yj
     , typelevel-tools-yj
     , yaftee
