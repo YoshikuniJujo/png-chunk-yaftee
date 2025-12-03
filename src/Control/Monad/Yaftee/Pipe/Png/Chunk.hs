@@ -55,9 +55,11 @@ import Numeric
 
 decodeRun_ :: forall nm es i o r . F.Loose (U.U es) =>
 	Eff.E (DecodeStates nm `Append` es) i o r -> Eff.E es i o ()
-decodeRun_ = void . (`State.runN` Crc32.initial)
+decodeRun_ = void . OnDemand.run . (`State.runN` Crc32.initial)
 
-type DecodeStates nm = '[State.Named nm Crc32.C]
+type DecodeStates nm =
+	State.Named nm Crc32.C ':
+	OnDemand.States nm
 
 
 decode :: forall nm -> (
@@ -160,7 +162,7 @@ encode nm = void $
 		fix \go -> (`when` go) =<< encodeChunk1 nm
 
 hEncode :: forall nm -> (
-	U.Member Pipe.P es, U.Member (State.Named nm Crc32.C) es,
+	U.Member Pipe.P es, EncodeMembers nm es,
 	U.Member (Except.E String) es, U.Member Fail.F es, U.Base IO.I es ) =>
 	Handle -> Eff.E es C o ()
 hEncode nm ho = void $ encode nm
@@ -168,7 +170,7 @@ hEncode nm ho = void $ encode nm
 	Pipe.=$= PipeBS.hPutStr ho
 
 encodeChunk1 :: forall nm -> (
-	U.Member Pipe.P es, U.Member (State.Named nm Crc32.C) es,
+	U.Member Pipe.P es, EncodeMembers nm es,
 	U.Member (Except.E String) es, U.Member Fail.F es ) =>
 	Eff.E es C BSF.ByteString Bool
 encodeChunk1 nm = do
