@@ -20,7 +20,7 @@ module Control.Monad.Yaftee.Pipe.Png.Chunk (
 
 	-- * ENCODE
 
-	encode, hEncode, encodeRun_, EncodeStates
+	encodeRun_, EncodeStates, encode, hEncode, EncodeMembers
 
 	) where
 
@@ -186,10 +186,14 @@ encodeChunk1 nm = do
 	Pipe.yield . BSF.fromBitsBE' $ Crc32.toWord c
 	pure $ cn /= "IEND"
 
+type EncodeMembers nm es = (
+	U.Member (State.Named nm Crc32.C) es
+	)
+
 encodeRun_ :: forall nm es i o r .
 	F.Loose (U.U es) =>
 	Eff.E (EncodeStates nm `Append` es) i o r ->
 	Eff.E es i o ()
-encodeRun_ = void . OnDemand.run @nm . PipeCrc32.run @nm
+encodeRun_ = void . PipeCrc32.run @nm
 
-type EncodeStates nm = State.Named nm Crc32.C ': OnDemand.States nm
+type EncodeStates nm = '[State.Named nm Crc32.C]
