@@ -152,7 +152,7 @@ instance MonoFoldable C where
 		Body bs -> ofoldl1Ex' o bs; _ -> error "instance MonoFoldable C: bad"
 
 encode :: forall nm -> (
-	U.Member Pipe.P es, U.Member (State.Named nm Crc32.C) es,
+	U.Member Pipe.P es, EncodeMembers nm es,
 	U.Member (Except.E String) es, U.Member Fail.F es ) =>
 	Eff.E es C BSF.ByteString ()
 encode nm = void $
