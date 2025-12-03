@@ -21,6 +21,18 @@ description:         Please see the README on GitHub at <https://github.com/Yosh
 
 dependencies:
 - base >= 4.7 && < 5
+- mono-traversable
+- yaftee
+- yaftee-basic-monads
+- yaftee-conduit
+- yaftee-conduit-mono-traversable
+- yaftee-conduit-bytestring
+- yaftee-conduit-bytestring-ft
+- higher-order-open-union
+- bytestring-ft
+- bitarray-bs
+- tools-yj
+- typelevel-tools-yj
 
 ghc-options:
 - -Wall
