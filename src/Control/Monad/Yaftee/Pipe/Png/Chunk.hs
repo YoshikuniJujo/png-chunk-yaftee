@@ -53,8 +53,7 @@ import Data.TypeLevel.List
 
 import Numeric
 
-decodeRun_ ::
-	F.Loose (U.U es) =>
+decodeRun_ :: forall nm es i o r . F.Loose (U.U es) =>
 	Eff.E (DecodeStates nm `Append` es) i o r -> Eff.E es i o ()
 decodeRun_ = void . (`State.runN` Crc32.initial)
 
